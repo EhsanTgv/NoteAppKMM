@@ -22,10 +22,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 
 @Composable
 fun NoteDetailsScreen(
     noteId: Long,
+    navController: NavController,
     viewModel: NoteDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -33,7 +35,7 @@ fun NoteDetailsScreen(
 
     LaunchedEffect(key1 = hasNoteBeenSaved) {
         if (hasNoteBeenSaved) {
-
+            navController.popBackStack()
         }
     }
 
