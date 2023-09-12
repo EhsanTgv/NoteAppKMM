@@ -97,7 +97,7 @@ fun NoteListScreen(
                         note = note,
                         backgroundColor = Color(note.colorHex),
                         onNoteClick = {
-                            navController.navigate("note_details/${note.id}")
+                            navController.navigate("note_detail/${note.id}")
                         },
                         onDeleteClick = {
                             viewModel.deleteNoteById(note.id!!)
