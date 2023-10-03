@@ -7,9 +7,51 @@
 //
 
 import Foundation
+import shared
 
 extension NoteListScreen{
-    class NoteListViewModel{
+    @MainActor class NoteListViewModel: ObservableObject{
+        private var noteDataSource: NoteDataSource? = nil
         
+        private let searchNotes = SearchNotes()
+        
+        private var notes = [Note]()
+        @Published private(set) var filteredNotes = [Note]()
+        @Published var searchText = "" {
+            didSet {
+                self.filteredNotes = searchNotes.execute(notes: self.note, query: searchText)
+            }
+        }
+        @Published private(set) var isSearchActive = false
+        
+        init(noteDataSource: NoteDataSource? = nil){
+            self.noteDataSource = noteDataSource
+        }
+        
+        func loadNotes(){
+            noteDataSource?.getAllNotes(completionHandler: {
+                self.notes = notes ?? []
+                self.filteredNotes = self.notes
+            })
+        }
+        
+        func deleteNoteById(id: Int64?){
+            if id != nil {
+                noteDataSource?.deleteNoteById(id: id!, completionHander:{
+                    self.loadNotes()
+                })
+            }
+        }
+        
+        func toggleIsSearchActive(){
+            self.isSearchActive = !isSearchActive
+            if !isSearchActive {
+                searchText = ""
+            }
+        }
+        
+        func setNoteDataSource(noteDataSource:NoteDataSource){
+            self.noteDataSource = noteDataSource
+        }
     }
 }
