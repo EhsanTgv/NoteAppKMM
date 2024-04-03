@@ -29,7 +29,7 @@ struct NoteListScreen: View {
                 HideableSearchTextField<EmptyView>(onSearchToggled: {
                     viewModel.toggleIsSearchActive()
                 }, destinationProvider: {
-                    
+                    EmptyView()
                 }, isSearchActive: viewModel.isSearchActive, searchText: $viewModel.searchText)
                 .frame(maxWidth:.infinity, minHeight:40)
                 .padding()
@@ -40,23 +40,27 @@ struct NoteListScreen: View {
                 }
             }
             
-            List {
-                ForEach(viewModel.filteredNotes, id: \.self.id) {note in
-                    Button(action: {
-                        isNoteSelected = true
-                        selectedNoteId = note.id?.int64Value
-                    }){
-                        NoteItem(note:note,onDeleteClick: {
-                            viewModel.deleteNoteById(id: note.id?.int64Value)
-                        })
+            if #available(iOS 15.0, *) {
+                List {
+                    ForEach(viewModel.filteredNotes, id: \.self.id) {note in
+                        Button(action: {
+                            isNoteSelected = true
+                            selectedNoteId = note.id?.int64Value
+                        }){
+                            NoteItem(note:note,onDeleteClick: {
+                                viewModel.deleteNoteById(id: note.id?.int64Value)
+                            })
+                        }
                     }
                 }
+                .onAppear{
+                    viewModel.loadNotes()
+                }
+                .listStyle(.plain)
+                .listRowSeparator(.hidden)
+            } else {
+                // Fallback on earlier versions
             }
-            .onAppear{
-                viewModel.loadNotes()
-            }
-            .listStyle(.plain)
-            .listRowSeparator(.hidden)
         }.onAppear{
             viewModel.setNoteDataSource(noteDataSource: noteDataSource)
         }
@@ -65,6 +69,6 @@ struct NoteListScreen: View {
 
 struct NoteListScreen_Previews: PreviewProvider {
     static var previews: some View {
-        NoteListScreen()
+        EmptyView()
     }
 }
