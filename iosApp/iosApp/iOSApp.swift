@@ -8,7 +8,9 @@ struct iOSApp: App {
 
 	var body: some Scene {
 		WindowGroup {
-            NoteListScreen(noteDataSource: databaseModule.noteDataSource)
+            NavigationView {
+                NoteListScreen(noteDataSource: databaseModule.noteDataSource)
+            }.accentColor(.black)
 		}
 	}
 }
